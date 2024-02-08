@@ -1,0 +1,17 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-Wall",
+      "-std=c99",
+      "-I/opt/homebrew/include",
+      "-o",
+      "spaceinvaders2",
+      "./src/main.c"
+    ],
+    "directory": "/Users/fede/Desktop/C/SDL2/SpaceInvaders2",
+    "file": "/Users/fede/Desktop/C/SDL2/SpaceInvaders2/src/main.c",
+    "output": "/Users/fede/Desktop/C/SDL2/SpaceInvaders2/spaceinvaders2"
+  }
+]
