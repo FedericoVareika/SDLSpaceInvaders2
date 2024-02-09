@@ -1,6 +1,8 @@
 #include <SDL2/SDL.h>
 #include <stdbool.h>
 
+#define SHIP_SPEED 100
+
 typedef struct {
     float x, y;
 } Vec2;
@@ -10,22 +12,26 @@ typedef struct {
 } Vec2i;
 
 typedef struct {
+    bool running;
+
     SDL_Window *window;
     SDL_Renderer *renderer;
+    SDL_Texture *texture;
 
     Vec2i window_size;
+    Vec2i game_size;
 
     struct {
         Vec2 position;
     } ship;
 
     struct {
-        int last_second;
-        int last_frame;
-        int delta_ns; // delta in nano seconds?
-        float delta;
-        int frames;
-        int fps; // dont know if i should make it float
+        Uint64 last_second;
+        Uint64 last_frame;
+        Uint64 delta_ms; // changed to ms
+        double delta;
+        Uint64 frames;
+        Uint64 fps; // dont know if i should make it float
     } time;
 
     struct {
@@ -34,3 +40,7 @@ typedef struct {
         bool shoot;
     } input;
 } State;
+
+void process_input(State *state);
+void update(State *state);
+void render(State *state);
