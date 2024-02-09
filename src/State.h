@@ -3,6 +3,8 @@
 
 #define SHIP_SPEED 100
 
+#define SPRITE_SIZE 16
+
 typedef struct {
     float x, y;
 } Vec2;
@@ -17,6 +19,7 @@ typedef struct {
     SDL_Window *window;
     SDL_Renderer *renderer;
     SDL_Texture *texture;
+    SDL_Texture *sprites;
 
     Vec2i window_size;
     Vec2i game_size;
@@ -43,4 +46,4 @@ typedef struct {
 
 void process_input(State *state);
 void update(State *state);
-void render(State *state);
+void render(const State *state);

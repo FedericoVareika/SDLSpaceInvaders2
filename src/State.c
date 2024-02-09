@@ -23,7 +23,7 @@ void process_input(State *state) {
                 state->input.left = true;
                 break;
             case SDLK_RIGHT:
-            case SDLK_s:
+            case SDLK_d:
                 state->input.right = true;
                 break;
             case SDLK_SPACE:
@@ -38,7 +38,7 @@ void process_input(State *state) {
                 state->input.left = false;
                 break;
             case SDLK_RIGHT:
-            case SDLK_s:
+            case SDLK_d:
                 state->input.right = false;
                 break;
             case SDLK_SPACE:
@@ -48,7 +48,7 @@ void process_input(State *state) {
     }
 }
 
-void update_time(State *state) {
+static void update_time(State *state) {
     Uint64 now = SDL_GetPerformanceCounter();
     state->time.frames++;
     // printf("%i\n", (int)now);
@@ -70,7 +70,7 @@ void update_time(State *state) {
     }
 }
 
-void update_ship(State *state) {
+static void update_ship(State *state) {
     if (state->input.left) {
         state->ship.position.x -= SHIP_SPEED * state->time.delta;
     }
@@ -84,7 +84,15 @@ void update(State *state) {
     update_ship(state);
 }
 
-void render(State *state) {
+static void render_sprite(const State *state, Vec2i offset, Vec2 position) {
+    const SDL_Rect *srcrect = &(SDL_Rect){
+        offset.x * 16, offset.y * SPRITE_SIZE, SPRITE_SIZE, SPRITE_SIZE};
+    const SDL_Rect *dstrect =
+        &(SDL_Rect){position.x, position.y, SPRITE_SIZE, SPRITE_SIZE};
+    SDL_RenderCopy(state->renderer, state->sprites, srcrect, dstrect);
+}
+
+void render(const State *state) {
     // Set a greyish backround color
     SDL_SetRenderDrawColor(state->renderer, 20, 20, 20, 0xFF);
     SDL_RenderClear(state->renderer);
@@ -94,12 +102,11 @@ void render(State *state) {
     SDL_SetRenderDrawColor(state->renderer, 0, 0, 0, 0xFF);
     SDL_RenderClear(state->renderer);
 
-    SDL_SetRenderDrawColor(state->renderer, 0xFF, 0, 0xFF, 0xFF);
-    SDL_RenderFillRect(
-        state->renderer,
-        &(SDL_Rect){state->ship.position.x, state->ship.position.y, 16, 16});
-    // &(SDL_Rect){0, 0, 128, 128});
+    // Draw ship
+    render_sprite(state, (Vec2i){0, 0}, state->ship.position);
 
+    // Calculate game scale so that the game appears as a "window" inside of the
+    // tab
     float game_scale = (float)state->window_size.y / (float)state->game_size.y;
 
     // Render texture on renderer

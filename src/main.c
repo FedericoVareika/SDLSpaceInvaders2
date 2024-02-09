@@ -1,9 +1,13 @@
 #include "SDL2/SDL_pixels.h"
 #include "SDL2/SDL_render.h"
+#include "SDL2/SDL_surface.h"
 #include "SDL2/SDL_video.h"
 #include "State.h"
 #include <SDL2/SDL.h>
 #include <stdio.h>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "../utils/stb_image.h"
 
 int init_state(State *state) {
     state->running = true;
@@ -46,8 +50,24 @@ int init_state(State *state) {
     }
 
     state->ship.position = (Vec2){0, 5};
-    printf(
-        "Ship pos: (%f, %f)\n", state->ship.position.x, state->ship.position.y);
+
+    const char *filename = "sprites/sprites.png";
+    int x, y, n, ok;
+    ok = stbi_info(filename, &x, &y, &n);
+    if (!ok) {
+        printf("could not get png info\n");
+        return 0;
+    }
+    stbi_set_flip_vertically_on_load(true);
+    unsigned char *sprites = stbi_load(filename, &x, &y, &n, 0);
+
+    SDL_Surface *sprite_surface = SDL_CreateRGBSurfaceWithFormatFrom(
+        sprites, x, y, n, x * n, SDL_PIXELFORMAT_ARGB8888);
+    state->sprites =
+        SDL_CreateTextureFromSurface(state->renderer, sprite_surface);
+
+    SDL_FreeSurface(sprite_surface); // Not sure if this is ok
+    stbi_image_free(sprites);        // This either
 
     return 1;
 }
